@@ -1,50 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <title>odt_get_ldap_users.sh</title>
-  <link rel="stylesheet" href="http://jashkenas.github.com/docco/resources/docco.css">
+    <meta http-eqiv='content-type' content='text/html;charset=utf-8'>
+    <title>odt_get_ldap_users.sh</title>
+    <link rel=stylesheet href="http://jashkenas.github.com/docco/resources/docco.css">
 </head>
 <body>
-<div id='container'>
-  <div id="background"></div>
-  <table cellspacing=0 cellpadding=0>
-  <thead>
-    <tr>
-      <th class=docs><h1>odt_get_ldap_users.sh</h1></th>
-      <th class=code></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr id='section-1'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-1">&#182;</a>
-        </div>
-        
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-2'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-2">&#182;</a>
-        </div>
-        <p>Author: <a href="http://donaldmerand.com">Donald Merand</a> for
+<div id=container>
+    <div id=background></div>
+    <table cellspacing=0 cellpadding=0>
+    <thead>
+      <tr>
+        <th class=docs><h1>odt_get_ldap_users.sh</h1></th>
+        <th class=code></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr><td class='docs'><p>Author: <a href="http://donaldmerand.com">Donald Merand</a> for
 <a href="http://www.explo.org">Explo</a></p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-3'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-3">&#182;</a>
-        </div>
-        <p>The goal is to get a spreadsheet from Open Directory of users, and the groups
+
+</td><td class=code><div class=highlight><pre>
+<span class="c">#!/bin/sh</span>
+
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>The goal is to get a spreadsheet from Open Directory of users, and the groups
 they are in. We use this at Explo for various database-related reasons, but
 we think it might be useful as a reference for how to do various things with
 dscl and Open Directory.</p>
@@ -52,259 +33,139 @@ dscl and Open Directory.</p>
 <p>Creates a spreadsheet called final_list.tab, which contains one row for each
 time a user is assigned to a group. The first element in the row is the group
 name, and each following element is a username for the same person</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-Setup'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-Setup">&#182;</a>
-        </div>
-        <h1>Setup</h1>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-5'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-5">&#182;</a>
-        </div>
-        <p>Fail if a pipeline fails, not just the last command</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="nb">set</span> -e</pre></div>
-      </td>
-    </tr>
-    <tr id='section-6'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-6">&#182;</a>
-        </div>
-        <p>Either pass the LDAP root as a parameter, or assume it&rsquo;s localhost</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="nv">LDAP_ROOT</span><span class="o">=</span><span class="s2">&quot;/LDAPv3/127.0.0.1/&quot;</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-Get_Stuff'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-Get_Stuff">&#182;</a>
-        </div>
-        <h1>Get Stuff</h1>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-8'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-8">&#182;</a>
-        </div>
-        <p>Retrieve user data from the LDAP server</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre>dscl <span class="nv">$LDAP_ROOT</span> -readall Users RecordName &gt; ldap_users.txt</pre></div>
-      </td>
-    </tr>
-    <tr id='section-9'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-9">&#182;</a>
-        </div>
-        <p>Parse user data into a readable spreadsheet</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre>awk <span class="s1">&#39;</span>
 
-<span class="s1"># DIVIDER</span>
+</td><td class=code><div class=highlight><pre>
 
+<span class="c">##  Setup</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Fail if a pipeline fails, not just the last command</p>
+
+</td><td class=code><div class=highlight><pre>
+<span class="nb">set</span> -e
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Either pass the LDAP root as a parameter, or assume it's localhost</p>
+
+</td><td class=code><div class=highlight><pre>
+<span class="nv">LDAP_ROOT</span><span class="o">=</span><span class="s2">&quot;/LDAPv3/127.0.0.1/&quot;</span>
+
+
+
+<span class="c">##  Get Stuff</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Retrieve user data from the LDAP server</p>
+
+</td><td class=code><div class=highlight><pre>
+dscl <span class="nv">$LDAP_ROOT</span> -readall Users RecordName &gt; ldap_users.txt
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Parse user data into a readable spreadsheet</p>
+
+</td><td class=code><div class=highlight><pre>
+awk <span class="s1">&#39;</span>
+<span class="s1">#creates a tab-separated list of users out of a DSCL LDAP export</span>
 <span class="s1">/RecordName: / {} #ignore</span>
 <span class="s1">/^-/ { </span>
-<span class="s1">  counter = 0</span>
-
-<span class="s1"># DIVIDER</span>
-
-<span class="s1">  for (i in users) {</span>
-<span class="s1">    printf(&quot;%s\t&quot;, users[i])</span>
-<span class="s1">    delete users[i]</span>
-<span class="s1">  }</span>
-<span class="s1">  printf(&quot;\n&quot;)</span>
+<span class="s1">	counter = 0</span>
+<span class="s1">	#Print every username, tab-separated</span>
+<span class="s1">	for (i in users) {</span>
+<span class="s1">		printf(&quot;%s\t&quot;, users[i])</span>
+<span class="s1">		delete users[i]</span>
+<span class="s1">	}</span>
+<span class="s1">	printf(&quot;\n&quot;)</span>
 <span class="s1">}</span>
 <span class="s1">/^ / {</span>
-
-<span class="s1"># DIVIDER</span>
-
-<span class="s1">  sub(/^ /, &quot;&quot;, $0)</span>
-<span class="s1">  users[counter] = $0	</span>
-<span class="s1">  counter += 1</span>
+<span class="s1">	#dscl puts a space before each username. get rid of it</span>
+<span class="s1">	sub(/^ /, &quot;&quot;, $0)</span>
+<span class="s1">	users[counter] = $0	</span>
+<span class="s1">	counter += 1</span>
 <span class="s1">}</span>
-<span class="s1">&#39;</span> ldap_users.txt &gt; user_list.tab</pre></div>
-      </td>
-    </tr>
-    <tr id='section-10'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-10">&#182;</a>
-        </div>
-        <p>creates a tab-separated list of users out of a DSCL LDAP export</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre>dscl <span class="nv">$LDAP_ROOT</span> -readall Groups GroupMembership &gt; ldap_groups.txt</pre></div>
-      </td>
-    </tr>
-    <tr id='section-11'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-11">&#182;</a>
-        </div>
-        <p>Print every username, tab-separated</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre>awk <span class="s1">&#39;</span>
+<span class="s1">&#39;</span> ldap_users.txt &gt; user_list.tab
 
-<span class="s1"># DIVIDER</span>
 
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Retrieve group assignment data from the LDAP server</p>
+
+</td><td class=code><div class=highlight><pre>
+dscl <span class="nv">$LDAP_ROOT</span> -readall Groups GroupMembership &gt; ldap_groups.txt
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Parse group data into a readable spreadsheet</p>
+
+</td><td class=code><div class=highlight><pre>
+awk <span class="s1">&#39;</span>
+<span class="s1">#makes a tab-separated spreadsheet out of the default DSCL GroupMembership export</span>
 <span class="s1">BEGIN {</span>
-<span class="s1">  OFS=&quot;\t&quot;</span>
-<span class="s1">  ORS=&quot;\n&quot;</span>
+<span class="s1">	OFS=&quot;\t&quot;</span>
+<span class="s1">	ORS=&quot;\n&quot;</span>
 <span class="s1">}</span>
 <span class="s1">/RecordName: / {</span>
-<span class="s1">  group = $2</span>
+<span class="s1">	group = $2</span>
 <span class="s1">}</span>
 <span class="s1">/GroupMembership: / {</span>
-<span class="s1">  for (i=2; i&lt;NF; i++) {</span>
-<span class="s1">    users[i] = $i</span>
-<span class="s1">  }</span>
+<span class="s1">	for (i=2; i&lt;NF; i++) {</span>
+<span class="s1">		users[i] = $i</span>
+<span class="s1">	}</span>
 <span class="s1">}</span>
 <span class="s1">/^-/ {</span>
-<span class="s1">  for (i in users) {</span>
-<span class="s1">    print group, users[i]</span>
-<span class="s1">    delete users[i]</span>
-<span class="s1">  }</span>
+<span class="s1">	for (i in users) {</span>
+<span class="s1">		print group, users[i]</span>
+<span class="s1">		delete users[i]</span>
+<span class="s1">	}</span>
 <span class="s1">}</span>
-<span class="s1">&#39;</span> ldap_groups.txt &gt; group_list.tab</pre></div>
-      </td>
-    </tr>
-    <tr id='section-12'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-12">&#182;</a>
-        </div>
-        <p>dscl puts a space before each username. get rid of it</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-13'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-13">&#182;</a>
-        </div>
-        <p>Retrieve group assignment data from the LDAP server</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre>awk <span class="s1">&#39;</span>
+<span class="s1">&#39;</span> ldap_groups.txt &gt; group_list.tab
 
-<span class="s1"># DIVIDER</span>
 
+<span class="c">##  Parse Stuff</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Now combine the two spreadsheets into one</p>
+
+</td><td class=code><div class=highlight><pre>
+awk <span class="s1">&#39;</span>
+<span class="s1">#Assumes you have sent the group spreadsheet, not the user spreadsheet</span>
 <span class="s1">{</span>
-<span class="s1">  command = &quot;grep &quot; $2 &quot; user_list.tab&quot; </span>
-<span class="s1">  command | getline grep_result</span>
-<span class="s1">  close command</span>
-<span class="s1">  printf(&quot;%s\t%s\n&quot;, $1, grep_result)</span>
+<span class="s1">	command = &quot;grep &quot; $2 &quot; user_list.tab&quot; </span>
+<span class="s1">	command | getline grep_result</span>
+<span class="s1">	close command</span>
+<span class="s1">	printf(&quot;%s\t%s\n&quot;, $1, grep_result)</span>
 <span class="s1">}</span>
 <span class="s1">&#39;</span> group_list.tab |
 
-sort -k 1 -k 2 &gt; combined_list.tab</pre></div>
-      </td>
-    </tr>
-    <tr id='section-14'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-14">&#182;</a>
-        </div>
-        <p>Parse group data into a readable spreadsheet</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-15'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-15">&#182;</a>
-        </div>
-        <p>makes a tab-separated spreadsheet out of the default DSCL GroupMembership export</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre>rm ldap_users.txt ldap_groups.txt <span class="c">#leave the group lists</span>
+sort -k 1 -k 2 &gt; combined_list.tab
 
-<span class="nb">echo</span> <span class="s2">&quot;user_list.tab, group_list.tab, and combined_list.tab created&quot;</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-Parse_Stuff'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-Parse_Stuff">&#182;</a>
-        </div>
-        <h1>Parse Stuff</h1>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-17'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-17">&#182;</a>
-        </div>
-        <p>Now combine the two spreadsheets into one</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-18'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-18">&#182;</a>
-        </div>
-        <p>Assumes you have sent the group spreadsheet, not the user spreadsheet</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-Cleanup'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-Cleanup">&#182;</a>
-        </div>
-        <h1>Cleanup</h1>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-20'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-20">&#182;</a>
-        </div>
-        <p>Clear out the temporary files</p>
 
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-  </table>
+
+<span class="c">##  Cleanup</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Clear out the temporary files</p>
+
+</td><td class=code><div class=highlight><pre>
+rm ldap_users.txt ldap_groups.txt <span class="c">#leave the group lists</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;user_list.tab, group_list.tab, and combined_list.tab created&quot;</span>
+
+
+</td><td class=code><div class=highlight><pre>
+</pre></div></td></tr><tr><td class=docs>
+
+</pre></div></td></tr><tr><td class=docs>
+</td><td class=code><div class=highlight><pre>
+
+</pre></div></td></tr><tr><td class=docs></td><td class='code'></td></tr>
+    </tbody>
+    </table>
 </div>
 </body>
+</html>
