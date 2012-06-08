@@ -14,3 +14,9 @@ Usage
 - Create a `server_user_list.txt` file as above.
 - `ruby odt_create_user_folder.rb -p path_to_parent_folder`
     - You can deny access to groups with the command `-d group_to_deny_access -d other_group_to_deny`  
+
+
+Notes
+-----
+
+Thanks to [this page](http://www.ideocentric.com/technology/articles/title/osx-acl) for tons of info on ACLs
