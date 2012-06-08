@@ -1,0 +1,1 @@
+This is the HTML source for <http://exploration.github.com/Open-Directory-CLI-Tools>. Mostly it's just source code generated using [shocco](https://github.com/rtomayko/shocco) and [rocco](https://github.com/rtomayko/rocco).
