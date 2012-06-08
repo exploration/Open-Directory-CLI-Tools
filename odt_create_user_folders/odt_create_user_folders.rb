@@ -16,7 +16,11 @@ require 'optparse'
 user_input_file = "server_user_list.txt"
 # Folder into which you'd like to place the user (required)
 parent_folder = ""
-deny = []
+
+# These two arrays are used to store the users/groups that you'd
+# like to specifically allow or deny access
+allow_access = ["admin"]
+deny_access = []
 
 
 
@@ -37,8 +41,11 @@ optparse = OptionParser.new do |opts|
   opts.on('-p', '--parent FOLDER', p_desc) do |p|
     parent_folder = p.sub(%r/\/$/, "")
   end
-  opts.on('-d', '--deny GROUP', 'groups to deny access') do |group|
-    deny.push group
+  opts.on('-a', '--allow GROUP', 'group to allow access') do |group|
+    allow_access.push group
+  end
+  opts.on('-d', '--deny GROUP', 'group to deny access') do |group|
+    deny_access.push group
   end
   i_desc = 'specify a file from which to import'
   opts.on('-i', '--input_file FILE', i_desc) do |file|
@@ -62,8 +69,7 @@ user_list = File.open(user_input_file, "r")
 # Attempt to create the passed folder, in case it doesn't exist.
 begin
   Dir.mkdir(parent_folder)
-rescue SystemCallError
-  #no problem...
+rescue
 end
 
 # Each row of the users file is a user. Try to add a directory
@@ -79,9 +85,7 @@ user_list.each do |line|
   folder_path = "#{parent_folder}/#{user_name}"
   begin
     dir = Dir.mkdir(folder_path)
-  rescue SystemCallError
-    puts "Error creating #{folder_path}"
-    #next
+  rescue
   end
 
   $stdout.printf "Attempting to create/set permissions for %s... ", folder_path
@@ -92,12 +96,12 @@ user_list.each do |line|
   system("chown #{user_name} '#{folder_path}'")
   system("chmod 660 '#{folder_path}'")
   system("chmod +a \"#{user_name} allow read,write,execute,delete,append,readattr,writeattr,readextattr,writeextattr,readsecurity,list,search,add_file,add_subdirectory,delete_child,file_inherit,directory_inherit\" '#{folder_path}'")
-  system("chmod +a \"admin allow read,write,execute,delete,append,readattr,writeattr,readextattr,writeextattr,readsecurity,list,search,add_file,add_subdirectory,delete_child,file_inherit,directory_inherit\" '#{folder_path}'")
-  deny.each do |group|
+  allow_access.each do |group|
+    system("chmod +a \"#{group} allow read,write,execute,delete,append,readattr,writeattr,readextattr,writeextattr,readsecurity,list,search,add_file,add_subdirectory,delete_child,file_inherit,directory_inherit\" '#{folder_path}'")
+  end
+  deny_access.each do |group|
     system("chmod +a \"#{group} deny read,write,execute,delete,append,writeattr,writeextattr,list,search,add_file,add_subdirectory,delete_child\" '#{folder_path}'")
   end
 
   $stdout.print "success!\n"
 end
-
-
