@@ -6,7 +6,7 @@ We also need the names of the groups that users are in so that we can associate 
 
 Usage
 -----
-Usage is simple. Just clone this repository onto your server, and run the `get_ldap_users.sh` script. You'll see a file called `final_list.tab`, which you can use to import users into the message board. See below for the entire procedure.
+Usage is simple. Just clone this repository onto your OS X server with `git clone https://github.com/exploration/Open-Directory-CLI-Tools.git`, and run the `get_ldap_users.sh` script. You'll see a file called `final_list.tab`, which you can use to import users into the message board. See below for the entire procedure.
 
 General User Management Procedure
 =============================
