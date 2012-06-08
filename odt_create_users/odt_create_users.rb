@@ -153,6 +153,6 @@ portico_users.each { |line|
 
   # Otherwise be a good UNIX citizen and print the results to STDERR
   else
-    $stderr.printf "User creation error for %s :(", user_name
+    $stderr.printf "User creation error for %s :(\n", user_name
   end
 }
