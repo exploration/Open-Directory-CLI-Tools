@@ -102,8 +102,7 @@ dscl_command = "dscl -u #{od_user} -P #{od_pass} #{od_host}"
 # Get the most recent UNIQUE ID from OD. We only have to do this once
 # via DSCL, then just increment it below, since that's all that OD
 # would do.
-unique_id = `dscl #{od_host} list Users UniqueID | awk '{print $2}' | sort -ug
-| tail -1`.to_i
+unique_id = `dscl #{od_host} list Users UniqueID | awk '{print $2}' | sort -ug | tail -1`.to_i
 
 # For each user in the input file...
 portico_users.each { |line|
@@ -128,15 +127,21 @@ portico_users.each { |line|
 
   # Attempt user creation
   $stdout.printf "Attempting to create %s %s... ", od_group, user_name
-  num_errors += system "#{dscl_command} create Users/#{user_name}"
-  num_errors += system "#{dscl_command} create Users/#{user_name} UniqueID #{unique_id}"
-  num_errors += system "#{dscl_command} create Users/#{user_name} RealName '#{first_name} #{last_name}'"
-  num_errors += system "#{dscl_command} create Users/#{user_name} PrimaryGroupID 1025"
-  num_errors += system "#{dscl_command} passwd Users/#{user_name} #{pass}"
+  system "#{dscl_command} create Users/#{user_name}"
+  num_errors += $?.exitstatus
+  system "#{dscl_command} create Users/#{user_name} UniqueID #{unique_id}"
+  num_errors += $?.exitstatus
+  system "#{dscl_command} create Users/#{user_name} RealName '#{first_name} #{last_name}'"
+  num_errors += $?.exitstatus
+  system "#{dscl_command} create Users/#{user_name} PrimaryGroupID 1025"
+  num_errors += $?.exitstatus
+  system "#{dscl_command} passwd Users/#{user_name} #{pass}"
+  num_errors += $?.exitstatus
 
   # Add users to group if applicable
   unless od_group.empty?
-    num_errors += system "dseditgroup -u #{od_user} -P #{od_pass} -o edit -t user -a #{user_name} #{od_group.downcase}"
+    system "dseditgroup -u #{od_user} -P #{od_pass} -o edit -t user -a #{user_name} #{od_group.downcase}"
+    num_errors += $?.exitstatus
   end
 
   # If there were no errors with the pile of shell scripts I just ran...
