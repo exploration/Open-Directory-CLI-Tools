@@ -113,10 +113,10 @@ list of all usernames and passwords that have been added to the OD.</p>
         <div class="pilwrap">
           <a class="pilcrow" href="#section-8">&#182;</a>
         </div>
-        <p>This is the file full of users you pass in.</p>
+        <p>Optional OD group to which to add all users</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="n">user_input_file</span> <span class="o">=</span> <span class="s2">&quot;portico_user_list.txt&quot;</span></pre></div>
+        <div class='highlight'><pre><span class="n">od_group</span> <span class="o">=</span> <span class="o">[]</span></pre></div>
       </td>
     </tr>
     <tr id='section-9'>
@@ -124,10 +124,10 @@ list of all usernames and passwords that have been added to the OD.</p>
         <div class="pilwrap">
           <a class="pilcrow" href="#section-9">&#182;</a>
         </div>
-        <p>This is the name of the list of usernames and passwords that gets generated.</p>
+        <p>This is the file full of users you pass in.</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="n">user_output_file</span> <span class="o">=</span> <span class="s2">&quot;server_user_list.txt&quot;</span></pre></div>
+        <div class='highlight'><pre><span class="n">user_input_file</span> <span class="o">=</span> <span class="s2">&quot;portico_user_list.txt&quot;</span></pre></div>
       </td>
     </tr>
     <tr id='section-10'>
@@ -135,10 +135,10 @@ list of all usernames and passwords that have been added to the OD.</p>
         <div class="pilwrap">
           <a class="pilcrow" href="#section-10">&#182;</a>
         </div>
-        <p>Optional OD group to which to add all users</p>
+        <p>This is the name of the list of usernames and passwords that gets generated.</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="n">od_group</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span></pre></div>
+        <div class='highlight'><pre><span class="n">user_output_file</span> <span class="o">=</span> <span class="s2">&quot;server_user_list.txt&quot;</span></pre></div>
       </td>
     </tr>
     <tr id='section-Parse_Command_Line_Options'>
@@ -178,7 +178,7 @@ relatively obvious what&rsquo;s going on here.</p>
         <div class='highlight'><pre><span class="n">optparse</span> <span class="o">=</span> <span class="no">OptionParser</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span> <span class="o">|</span><span class="n">opts</span><span class="o">|</span>
   <span class="n">opts</span><span class="o">.</span><span class="n">banner</span> <span class="o">=</span> <span class="s2">&quot;Usage: create_users.rb |options|&quot;</span>
   <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">,</span> <span class="s1">&#39;show this help&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="n">show_help</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span> <span class="p">}</span>
-  <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--pass PASSWORD&#39;</span><span class="p">,</span> <span class="s1">&#39;(required) specify a dscl pass&#39;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">pass</span><span class="o">|</span> 
+  <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--pass PASSWORD&#39;</span><span class="p">,</span> <span class="s1">&#39;(required) specify a dscl/OD pass&#39;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">pass</span><span class="o">|</span> 
     <span class="n">od_pass</span> <span class="o">=</span> <span class="n">pass</span>
   <span class="k">end</span>
   <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;-u&#39;</span><span class="p">,</span> <span class="s1">&#39;--user USERNAME&#39;</span><span class="p">,</span> <span class="s1">&#39;specify a dscl/OD user&#39;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">user</span><span class="o">|</span>
@@ -190,9 +190,9 @@ relatively obvious what&rsquo;s going on here.</p>
   <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--output_file FILE&#39;</span><span class="p">,</span> <span class="s1">&#39;output results to file&#39;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">file</span><span class="o">|</span>
     <span class="n">user_output_file</span> <span class="o">=</span> <span class="n">file</span>
   <span class="k">end</span>
-  <span class="n">g_desc</span> <span class="o">=</span> <span class="s1">&#39;set OD user group to whatever you want&#39;</span>
+  <span class="n">g_desc</span> <span class="o">=</span> <span class="s1">&#39;set created OD user group. use -g group1 -g group2 if you want.&#39;</span>
   <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;-g&#39;</span><span class="p">,</span> <span class="s1">&#39;--group GROUPNAME&#39;</span><span class="p">,</span> <span class="n">g_desc</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">group</span><span class="o">|</span>
-    <span class="n">od_group</span> <span class="o">=</span> <span class="n">group</span>
+    <span class="n">od_group</span><span class="o">.</span><span class="n">push</span> <span class="n">group</span>
   <span class="k">end</span>
 <span class="k">end</span></pre></div>
       </td>
@@ -238,7 +238,7 @@ relatively obvious what&rsquo;s going on here.</p>
         <p>Attempt to open the input users file for reading</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="n">portico_users</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">user_input_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span></pre></div>
+        <div class='highlight'><pre><span class="n">od_user_list</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">user_input_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span></pre></div>
       </td>
     </tr>
     <tr id='section-18'>
@@ -249,7 +249,7 @@ relatively obvious what&rsquo;s going on here.</p>
         <p>Attempt to open/create the output users file for appending</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="n">output_users</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">user_output_file</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span></pre></div>
+        <div class='highlight'><pre><span class="n">output_users</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">user_output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span></pre></div>
       </td>
     </tr>
     <tr id='section-19'>
@@ -299,7 +299,7 @@ would do.</p>
         <p>For each user in the input file&hellip;</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="n">portico_users</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span></pre></div>
+        <div class='highlight'><pre><span class="n">od_user_list</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span></pre></div>
       </td>
     </tr>
     <tr id='section-23'>
@@ -310,7 +310,7 @@ would do.</p>
         <p>Get rid of the new line and split into fields based on tab</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre>  <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span></pre></div>
+        <div class='highlight'><pre>  <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span></pre></div>
       </td>
     </tr>
     <tr id='section-24'>
@@ -323,8 +323,7 @@ expects: First Name TAB Last Name</p>
       </td>
       <td class=code>
         <div class='highlight'><pre>  <span class="n">first_name</span> <span class="o">=</span> <span class="n">row</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-  <span class="n">last_name</span> <span class="o">=</span> <span class="n">row</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
-  <span class="n">user_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">first_name</span><span class="si">}#{</span><span class="n">last_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">downcase</span></pre></div>
+  <span class="n">last_name</span> <span class="o">=</span> <span class="n">row</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span></pre></div>
       </td>
     </tr>
     <tr id='section-25'>
@@ -332,10 +331,11 @@ expects: First Name TAB Last Name</p>
         <div class="pilwrap">
           <a class="pilcrow" href="#section-25">&#182;</a>
         </div>
-        <p>Create a random password</p>
+        <p>User name is first and last name, lower case, without any fance characters
+such as &ndash; or &lsquo;</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre>  <span class="n">pass</span> <span class="o">=</span> <span class="n">rand_pass</span></pre></div>
+        <div class='highlight'><pre>  <span class="n">user_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">first_name</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">%r/(\s|\&#39;|-)/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">downcase</span><span class="si">}#{</span><span class="n">last_name</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">%r/(\s|\&#39;|-)/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">downcase</span><span class="si">}</span><span class="s2">&quot;</span></pre></div>
       </td>
     </tr>
     <tr id='section-26'>
@@ -343,16 +343,39 @@ expects: First Name TAB Last Name</p>
         <div class="pilwrap">
           <a class="pilcrow" href="#section-26">&#182;</a>
         </div>
-        <p>Increment the unique_id from above once per row</p>
+        <p>If there&rsquo;s anything else in the row, pass it along to the output as
+tab-separated</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre>  <span class="n">unique_id</span> <span class="o">+=</span> <span class="mi">1</span></pre></div>
+        <div class='highlight'><pre>  <span class="n">whatever_else</span> <span class="o">=</span> <span class="n">row</span><span class="o">[</span><span class="mi">2</span><span class="o">.</span><span class="n">.</span><span class="o">-</span><span class="mi">1</span><span class="o">].</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">row</span><span class="o">[</span><span class="mi">2</span><span class="o">]</span></pre></div>
       </td>
     </tr>
     <tr id='section-27'>
       <td class=docs>
         <div class="pilwrap">
           <a class="pilcrow" href="#section-27">&#182;</a>
+        </div>
+        <p>Create a random password</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre>  <span class="n">pass</span> <span class="o">=</span> <span class="n">rand_pass</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-28'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-28">&#182;</a>
+        </div>
+        <p>Increment the unique_id from above once per row</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre>  <span class="n">unique_id</span> <span class="o">+=</span> <span class="mi">1</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-29'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-29">&#182;</a>
         </div>
         <p>Since system calls exit 0 on success, I&rsquo;m going to add all the exit
 statuses and make a fuss if they are greater than zero</p>
@@ -361,20 +384,20 @@ statuses and make a fuss if they are greater than zero</p>
         <div class='highlight'><pre>  <span class="n">num_errors</span> <span class="o">=</span> <span class="mi">0</span></pre></div>
       </td>
     </tr>
-    <tr id='section-28'>
+    <tr id='section-30'>
       <td class=docs>
         <div class="pilwrap">
-          <a class="pilcrow" href="#section-28">&#182;</a>
+          <a class="pilcrow" href="#section-30">&#182;</a>
         </div>
         <p>Attempt user creation</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre>  <span class="vg">$stdout</span><span class="o">.</span><span class="n">printf</span> <span class="s2">&quot;Attempting to create %s %s... &quot;</span><span class="p">,</span> <span class="n">od_group</span><span class="p">,</span> <span class="n">user_name</span>
+        <div class='highlight'><pre>  <span class="vg">$stdout</span><span class="o">.</span><span class="n">printf</span> <span class="s2">&quot;Attempting to create %s %s... &quot;</span><span class="p">,</span> <span class="n">od_group</span><span class="o">.</span><span class="n">join</span><span class="p">,</span> <span class="n">user_name</span>
   <span class="nb">system</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">dscl_command</span><span class="si">}</span><span class="s2"> create Users/</span><span class="si">#{</span><span class="n">user_name</span><span class="si">}</span><span class="s2">&quot;</span>
   <span class="n">num_errors</span> <span class="o">+=</span> <span class="vg">$?</span><span class="o">.</span><span class="n">exitstatus</span>
   <span class="nb">system</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">dscl_command</span><span class="si">}</span><span class="s2"> create Users/</span><span class="si">#{</span><span class="n">user_name</span><span class="si">}</span><span class="s2"> UniqueID </span><span class="si">#{</span><span class="n">unique_id</span><span class="si">}</span><span class="s2">&quot;</span>
   <span class="n">num_errors</span> <span class="o">+=</span> <span class="vg">$?</span><span class="o">.</span><span class="n">exitstatus</span>
-  <span class="nb">system</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">dscl_command</span><span class="si">}</span><span class="s2"> create Users/</span><span class="si">#{</span><span class="n">user_name</span><span class="si">}</span><span class="s2"> RealName &#39;</span><span class="si">#{</span><span class="n">first_name</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">last_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+  <span class="nb">system</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">dscl_command</span><span class="si">}</span><span class="s2"> create Users/</span><span class="si">#{</span><span class="n">user_name</span><span class="si">}</span><span class="s2"> RealName &#39;</span><span class="si">#{</span><span class="n">first_name</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">last_name</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">%r/(\s|\&#39;|-)/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
   <span class="n">num_errors</span> <span class="o">+=</span> <span class="vg">$?</span><span class="o">.</span><span class="n">exitstatus</span>
   <span class="nb">system</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">dscl_command</span><span class="si">}</span><span class="s2"> create Users/</span><span class="si">#{</span><span class="n">user_name</span><span class="si">}</span><span class="s2"> PrimaryGroupID 1025&quot;</span>
   <span class="n">num_errors</span> <span class="o">+=</span> <span class="vg">$?</span><span class="o">.</span><span class="n">exitstatus</span>
@@ -382,41 +405,20 @@ statuses and make a fuss if they are greater than zero</p>
   <span class="n">num_errors</span> <span class="o">+=</span> <span class="vg">$?</span><span class="o">.</span><span class="n">exitstatus</span></pre></div>
       </td>
     </tr>
-    <tr id='section-29'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-29">&#182;</a>
-        </div>
-        <p>Add users to group if applicable</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre>  <span class="k">unless</span> <span class="n">od_group</span><span class="o">.</span><span class="n">empty?</span>
-    <span class="nb">system</span> <span class="s2">&quot;dseditgroup -u </span><span class="si">#{</span><span class="n">od_user</span><span class="si">}</span><span class="s2"> -P </span><span class="si">#{</span><span class="n">od_pass</span><span class="si">}</span><span class="s2"> -o edit -t user -a </span><span class="si">#{</span><span class="n">user_name</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">od_group</span><span class="o">.</span><span class="n">downcase</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">num_errors</span> <span class="o">+=</span> <span class="vg">$?</span><span class="o">.</span><span class="n">exitstatus</span>
-  <span class="k">end</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-30'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-30">&#182;</a>
-        </div>
-        <p>If there were no errors with the pile of shell scripts I just ran&hellip;</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre>  <span class="k">if</span> <span class="n">num_errors</span> <span class="o">==</span> <span class="mi">0</span></pre></div>
-      </td>
-    </tr>
     <tr id='section-31'>
       <td class=docs>
         <div class="pilwrap">
           <a class="pilcrow" href="#section-31">&#182;</a>
         </div>
-        <p>Append username and password to output file</p>
+        <p>Add users to group if applicable</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre>    <span class="n">output_users</span><span class="o">.</span><span class="n">puts</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">user_name</span><span class="si">}</span><span class="se">\t</span><span class="si">#{</span><span class="n">pass</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="vg">$stdout</span><span class="o">.</span><span class="n">print</span> <span class="s2">&quot;Success!</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="c1"># ...continuing the line we printed above</span></pre></div>
+        <div class='highlight'><pre>  <span class="k">unless</span> <span class="n">od_group</span><span class="o">.</span><span class="n">empty?</span>
+    <span class="n">od_group</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">group</span><span class="o">|</span>
+      <span class="nb">system</span> <span class="s2">&quot;dseditgroup -u </span><span class="si">#{</span><span class="n">od_user</span><span class="si">}</span><span class="s2"> -P </span><span class="si">#{</span><span class="n">od_pass</span><span class="si">}</span><span class="s2"> -o edit -t user -a </span><span class="si">#{</span><span class="n">user_name</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">group</span><span class="o">.</span><span class="n">downcase</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="n">num_errors</span> <span class="o">+=</span> <span class="vg">$?</span><span class="o">.</span><span class="n">exitstatus</span>
+    <span class="k">end</span>
+  <span class="k">end</span></pre></div>
       </td>
     </tr>
     <tr id='section-32'>
@@ -424,14 +426,49 @@ statuses and make a fuss if they are greater than zero</p>
         <div class="pilwrap">
           <a class="pilcrow" href="#section-32">&#182;</a>
         </div>
+        <p>If there were no errors with the pile of shell scripts I just ran&hellip;</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre>  <span class="k">if</span> <span class="n">num_errors</span> <span class="o">==</span> <span class="mi">0</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-33'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-33">&#182;</a>
+        </div>
+        <p>Append username and password (and anything else passed in) to output file</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre>    <span class="n">output_users</span><span class="o">.</span><span class="n">puts</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">user_name</span><span class="si">}</span><span class="se">\t</span><span class="si">#{</span><span class="n">pass</span><span class="si">}</span><span class="se">\t</span><span class="si">#{</span><span class="n">first_name</span><span class="si">}</span><span class="se">\t</span><span class="si">#{</span><span class="n">last_name</span><span class="si">}</span><span class="se">\t</span><span class="si">#{</span><span class="n">whatever_else</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="vg">$stdout</span><span class="o">.</span><span class="n">print</span> <span class="s2">&quot;Success!</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="c1"># ...continuing the line we printed above</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-34'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-34">&#182;</a>
+        </div>
         <p>Otherwise be a good UNIX citizen and print the results to STDERR</p>
-
       </td>
       <td class=code>
         <div class='highlight'><pre>  <span class="k">else</span>
     <span class="vg">$stderr</span><span class="o">.</span><span class="n">printf</span> <span class="s2">&quot;User creation error for %s :(</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">user_name</span>
   <span class="k">end</span>
 <span class="p">}</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-35'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-35">&#182;</a>
+        </div>
+        <p>Close our file references</p>
+
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="n">od_user_list</span><span class="o">.</span><span class="n">close</span>
+<span class="n">output_users</span><span class="o">.</span><span class="n">close</span></pre></div>
       </td>
     </tr>
   </table>
