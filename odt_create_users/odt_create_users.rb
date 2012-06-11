@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 # Author: [Donald L. Merand](http://donaldmerand.com) for
 # [Explo](http://www.explo.org)
@@ -32,12 +32,12 @@ od_host = "/LDAPv3/127.0.0.1/"
 od_user = "diradmin"
 # Password is intentionally blank. You know, for security.
 od_pass = ""
+# Optional OD group to which to add all users
+od_group = []
 # This is the file full of users you pass in.
 user_input_file = "portico_user_list.txt"
 # This is the name of the list of usernames and passwords that gets generated.
 user_output_file = "server_user_list.txt"
-# Optional OD group to which to add all users
-od_group = ""
 
 
 
@@ -54,7 +54,7 @@ end
 optparse = OptionParser.new do |opts|
   opts.banner = "Usage: create_users.rb |options|"
   opts.on('-h', '--help', 'show this help') { show_help(opts) }
-  opts.on('-p', '--pass PASSWORD', '(required) specify a dscl pass') do |pass| 
+  opts.on('-p', '--pass PASSWORD', '(required) specify a dscl/OD pass') do |pass| 
     od_pass = pass
   end
   opts.on('-u', '--user USERNAME', 'specify a dscl/OD user') do |user|
@@ -66,9 +66,9 @@ optparse = OptionParser.new do |opts|
   opts.on('-o', '--output_file FILE', 'output results to file') do |file|
     user_output_file = file
   end
-  g_desc = 'set OD user group to whatever you want'
+  g_desc = 'set created OD user group. use -g group1 -g group2 if you want.'
   opts.on('-g', '--group GROUPNAME', g_desc) do |group|
-    od_group = group
+    od_group.push group
   end
 end
 
@@ -84,9 +84,9 @@ show_help(optparse) if od_pass.empty?
 ### Okay We're Ready
 
 # Attempt to open the input users file for reading
-portico_users = File.open(user_input_file, "r")
+od_user_list = File.open(user_input_file, "r")
 # Attempt to open/create the output users file for appending
-output_users = File.open(user_output_file, "a")
+output_users = File.open(user_output_file, "w")
 
 
 # Simple function to create a random password,
@@ -105,15 +105,20 @@ dscl_command = "dscl -u #{od_user} -P #{od_pass} #{od_host}"
 unique_id = `dscl #{od_host} list Users UniqueID | awk '{print $2}' | sort -ug | tail -1`.to_i
 
 # For each user in the input file...
-portico_users.each { |line|
+od_user_list.each { |line|
   # Get rid of the new line and split into fields based on tab
-  row = line.gsub!("\n", "").split("\t")
+  row = line.gsub("\n", "").split("\t")
 
   # Get variables based on field position
   # expects: First Name TAB Last Name
   first_name = row[0]
   last_name = row[1]
-  user_name = "#{first_name}#{last_name}".downcase
+  # User name is first and last name, lower case, without any fance characters
+  # such as - or '
+  user_name = "#{first_name.gsub(%r/(\s|\'|-)/, "").downcase}#{last_name.gsub(%r/(\s|\'|-)/, "").downcase}"
+  # If there's anything else in the row, pass it along to the output as
+  # tab-separated
+  whatever_else = row[2..-1].join("\t") if row[2]
 
   # Create a random password
   pass = rand_pass
@@ -126,12 +131,12 @@ portico_users.each { |line|
   num_errors = 0
 
   # Attempt user creation
-  $stdout.printf "Attempting to create %s %s... ", od_group, user_name
+  $stdout.printf "Attempting to create %s %s... ", od_group.join, user_name
   system "#{dscl_command} create Users/#{user_name}"
   num_errors += $?.exitstatus
   system "#{dscl_command} create Users/#{user_name} UniqueID #{unique_id}"
   num_errors += $?.exitstatus
-  system "#{dscl_command} create Users/#{user_name} RealName '#{first_name} #{last_name}'"
+  system "#{dscl_command} create Users/#{user_name} RealName '#{first_name} #{last_name.gsub(%r/(\s|\'|-)/, "")}'"
   num_errors += $?.exitstatus
   system "#{dscl_command} create Users/#{user_name} PrimaryGroupID 1025"
   num_errors += $?.exitstatus
@@ -140,15 +145,17 @@ portico_users.each { |line|
 
   # Add users to group if applicable
   unless od_group.empty?
-    system "dseditgroup -u #{od_user} -P #{od_pass} -o edit -t user -a #{user_name} #{od_group.downcase}"
-    num_errors += $?.exitstatus
+    od_group.each do |group|
+      system "dseditgroup -u #{od_user} -P #{od_pass} -o edit -t user -a #{user_name} #{group.downcase}"
+      num_errors += $?.exitstatus
+    end
   end
 
   # If there were no errors with the pile of shell scripts I just ran...
   if num_errors == 0
 
-    # Append username and password to output file
-    output_users.puts "#{user_name}\t#{pass}"
+    # Append username and password (and anything else passed in) to output file
+    output_users.puts "#{user_name}\t#{pass}\t#{first_name}\t#{last_name}\t#{whatever_else}"
     $stdout.print "Success!\n" # ...continuing the line we printed above
 
   # Otherwise be a good UNIX citizen and print the results to STDERR
@@ -156,3 +163,7 @@ portico_users.each { |line|
     $stderr.printf "User creation error for %s :(\n", user_name
   end
 }
+
+# Close our file references
+od_user_list.close
+output_users.close
