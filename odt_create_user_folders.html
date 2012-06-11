@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>odt_create_user_folders.rb</title>
+  <link rel="stylesheet" href="http://jashkenas.github.com/docco/resources/docco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <table cellspacing=0 cellpadding=0>
+  <thead>
+    <tr>
+      <th class=docs><h1>odt_create_user_folders.rb</h1></th>
+      <th class=code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id='section-1'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-1">&#182;</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre></pre></div>
+      </td>
+    </tr>
+    <tr id='section-2'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-2">&#182;</a>
+        </div>
+        <p>Author: Donald L. Merand
+Given a tab-separated text file with usernames as the first
+row, create user folders in a chosen directory, and
+add ACl entries so that only that user can access the folder.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre></pre></div>
+      </td>
+    </tr>
+    <tr id='section-3'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-3">&#182;</a>
+        </div>
+        <p>We use optparse to do command line options</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="nb">require</span> <span class="s1">&#39;optparse&#39;</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-Initialize_variables'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-Initialize_variables">&#182;</a>
+        </div>
+        <h2>Initialize variables</h2>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre></pre></div>
+      </td>
+    </tr>
+    <tr id='section-5'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-5">&#182;</a>
+        </div>
+        <p>This is the file full of users you pass in.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="n">user_input_file</span> <span class="o">=</span> <span class="s2">&quot;server_user_list.txt&quot;</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-6'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-6">&#182;</a>
+        </div>
+        <p>Folder into which you&rsquo;d like to place the user (required)</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="n">parent_folder</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-7'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-7">&#182;</a>
+        </div>
+        <p>These two arrays are used to store the users/groups that you&rsquo;d
+like to specifically allow or deny access</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="n">allow_access</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;admin&quot;</span><span class="o">]</span>
+<span class="n">deny_access</span> <span class="o">=</span> <span class="o">[]</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-Parse_Command_Line_Options'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-Parse_Command_Line_Options">&#182;</a>
+        </div>
+        <h2>Parse Command Line Options</h2>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre></pre></div>
+      </td>
+    </tr>
+    <tr id='section-9'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-9">&#182;</a>
+        </div>
+        <p>Simple function to show help for the command-line interface</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="k">def</span> <span class="nf">show_help</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+  <span class="nb">puts</span> <span class="n">opts</span>
+  <span class="nb">exit</span> <span class="mi">0</span>
+<span class="k">end</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-10'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-10">&#182;</a>
+        </div>
+        <p>Optparse is totally rad for reading command line options.  Hopefully it&rsquo;ll be
+relatively obvious what&rsquo;s going on here.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="n">optparse</span> <span class="o">=</span> <span class="no">OptionParser</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span> <span class="o">|</span><span class="n">opts</span><span class="o">|</span>
+  <span class="n">opts</span><span class="o">.</span><span class="n">banner</span> <span class="o">=</span> <span class="s2">&quot;Usage: create_users.rb |options|&quot;</span>
+  <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">,</span> <span class="s1">&#39;show this help&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="n">show_help</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span> <span class="p">}</span>
+  <span class="n">p_desc</span> <span class="o">=</span> <span class="s1">&#39;(required) parent folder into which to add users&#39;</span>
+  <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--parent FOLDER&#39;</span><span class="p">,</span> <span class="n">p_desc</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="nb">p</span><span class="o">|</span>
+    <span class="n">parent_folder</span> <span class="o">=</span> <span class="nb">p</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sr">%r/\/$/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+  <span class="k">end</span>
+  <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;-a&#39;</span><span class="p">,</span> <span class="s1">&#39;--allow GROUP&#39;</span><span class="p">,</span> <span class="s1">&#39;group to allow access&#39;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">group</span><span class="o">|</span>
+    <span class="n">allow_access</span><span class="o">.</span><span class="n">push</span> <span class="n">group</span>
+  <span class="k">end</span>
+  <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;-d&#39;</span><span class="p">,</span> <span class="s1">&#39;--deny GROUP&#39;</span><span class="p">,</span> <span class="s1">&#39;group to deny access&#39;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">group</span><span class="o">|</span>
+    <span class="n">deny_access</span><span class="o">.</span><span class="n">push</span> <span class="n">group</span>
+  <span class="k">end</span>
+  <span class="n">i_desc</span> <span class="o">=</span> <span class="s1">&#39;specify a file from which to import&#39;</span>
+  <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--input_file FILE&#39;</span><span class="p">,</span> <span class="n">i_desc</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">file</span><span class="o">|</span>
+    <span class="n">user_input_file</span> <span class="o">=</span> <span class="n">file</span>
+  <span class="k">end</span>
+<span class="k">end</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-11'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-11">&#182;</a>
+        </div>
+        <p>Do the actual parsing of options, now that we&rsquo;ve set it up.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="n">optparse</span><span class="o">.</span><span class="n">parse!</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-12'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-12">&#182;</a>
+        </div>
+        <p>Validate that a password was sent, exit if not.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="n">show_help</span><span class="p">(</span><span class="n">optparse</span><span class="p">)</span> <span class="k">if</span> <span class="n">parent_folder</span><span class="o">.</span><span class="n">empty?</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-Ready_for_Action!'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-Ready_for_Action!">&#182;</a>
+        </div>
+        <h2>Ready for Action!</h2>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre></pre></div>
+      </td>
+    </tr>
+    <tr id='section-14'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-14">&#182;</a>
+        </div>
+        <p>Attempt to open/create the input users file for appending</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="n">user_list</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">user_input_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-15'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-15">&#182;</a>
+        </div>
+        <p>Attempt to create the passed folder, in case it doesn&rsquo;t exist.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="k">begin</span>
+  <span class="no">Dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parent_folder</span><span class="p">)</span>
+<span class="k">rescue</span>
+<span class="k">end</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-16'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-16">&#182;</a>
+        </div>
+        <p>Each row of the users file is a user. Try to add a directory
+for them and update the permissions</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="n">user_list</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-17'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-17">&#182;</a>
+        </div>
+        <p>Tab-separated file. Split on tabs to make an array</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre>  <span class="n">record</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-18'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-18">&#182;</a>
+        </div>
+        <p>User name is the first row in the record</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre>  <span class="n">user_name</span> <span class="o">=</span> <span class="n">record</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-19'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-19">&#182;</a>
+        </div>
+        <p>Create user folder</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre>  <span class="n">folder_path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">parent_folder</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">user_name</span><span class="si">}</span><span class="s2">&quot;</span>
+  <span class="k">begin</span>
+    <span class="n">dir</span> <span class="o">=</span> <span class="no">Dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">folder_path</span><span class="p">)</span>
+  <span class="k">rescue</span>
+  <span class="k">end</span>
+
+  <span class="vg">$stdout</span><span class="o">.</span><span class="n">printf</span> <span class="s2">&quot;Attempting to create/set permissions for %s... &quot;</span><span class="p">,</span> <span class="n">folder_path</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-20'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-20">&#182;</a>
+        </div>
+        <p>Set ACL settings&hellip;
+<strong>NOTE</strong> that we assume there is an LDAP user for the user
+in the list. Perhaps modify this script to check?</p>
+
+      </td>
+      <td class=code>
+        <div class='highlight'><pre>  <span class="nb">system</span><span class="p">(</span><span class="s2">&quot;chown </span><span class="si">#{</span><span class="n">user_name</span><span class="si">}</span><span class="s2"> &#39;</span><span class="si">#{</span><span class="n">folder_path</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+  <span class="nb">system</span><span class="p">(</span><span class="s2">&quot;chmod 660 &#39;</span><span class="si">#{</span><span class="n">folder_path</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+  <span class="nb">system</span><span class="p">(</span><span class="s2">&quot;chmod +a </span><span class="se">\&quot;</span><span class="si">#{</span><span class="n">user_name</span><span class="si">}</span><span class="s2"> allow read,write,execute,delete,append,readattr,writeattr,readextattr,writeextattr,readsecurity,list,search,add_file,add_subdirectory,delete_child,file_inherit,directory_inherit</span><span class="se">\&quot;</span><span class="s2"> &#39;</span><span class="si">#{</span><span class="n">folder_path</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+  <span class="n">allow_access</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">group</span><span class="o">|</span>
+    <span class="nb">system</span><span class="p">(</span><span class="s2">&quot;chmod +a </span><span class="se">\&quot;</span><span class="si">#{</span><span class="n">group</span><span class="si">}</span><span class="s2"> allow read,write,execute,delete,append,readattr,writeattr,readextattr,writeextattr,readsecurity,list,search,add_file,add_subdirectory,delete_child,file_inherit,directory_inherit</span><span class="se">\&quot;</span><span class="s2"> &#39;</span><span class="si">#{</span><span class="n">folder_path</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+  <span class="k">end</span>
+  <span class="n">deny_access</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">group</span><span class="o">|</span>
+    <span class="nb">system</span><span class="p">(</span><span class="s2">&quot;chmod +a </span><span class="se">\&quot;</span><span class="si">#{</span><span class="n">group</span><span class="si">}</span><span class="s2"> deny read,write,execute,delete,append,writeattr,writeextattr,list,search,add_file,add_subdirectory,delete_child</span><span class="se">\&quot;</span><span class="s2"> &#39;</span><span class="si">#{</span><span class="n">folder_path</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="vg">$stdout</span><span class="o">.</span><span class="n">print</span> <span class="s2">&quot;success!</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="k">end</span></pre></div>
+      </td>
+    </tr>
+  </table>
+</div>
+</body>
