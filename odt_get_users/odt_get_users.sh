@@ -28,25 +28,7 @@ LDAP_ROOT="/LDAPv3/127.0.0.1/"
 dscl $LDAP_ROOT -readall Users RecordName > ldap_users.txt
 
 # Parse user data into a readable spreadsheet
-awk '
-#creates a tab-separated list of users out of a DSCL LDAP export
-/RecordName: / {} #ignore
-/^-/ { 
-	counter = 0
-	#Print every username, tab-separated
-	for (i in users) {
-		printf("%s\t", users[i])
-		delete users[i]
-	}
-	printf("\n")
-}
-/^ / {
-	#dscl puts a space before each username. get rid of it
-	sub(/^ /, "", $0)
-	users[counter] = $0	
-	counter += 1
-}
-' ldap_users.txt > user_list.tab
+ruby -nae 'puts $F[1] if $F[0] == "RecordName:"' ldap_users.txt > user_list.tab
 
 
 # Retrieve group assignment data from the LDAP server
