@@ -138,7 +138,7 @@ od_user_list.each { |line|
   num_errors += $?.exitstatus
   system "#{dscl_command} create Users/#{user_name} RealName '#{first_name} #{last_name.gsub(%r/(\s|\'|-)/, "")}'"
   num_errors += $?.exitstatus
-  system "#{dscl_command} create Users/#{user_name} PrimaryGroupID 1025"
+  system "#{dscl_command} create Users/#{user_name} PrimaryGroupID 20"
   num_errors += $?.exitstatus
   system "#{dscl_command} passwd Users/#{user_name} #{pass}"
   num_errors += $?.exitstatus
