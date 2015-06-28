@@ -12,15 +12,15 @@ General User Management Procedure
 =============================
 Here's what needs to happen, in rough order:
 
-- Use `odt_create_users` to import students and faculty out of Portico. Check the README there for more information.
+- Use `od_create_users` to import students and faculty out of Portico. Check the README there for more information.
 - Get a list of users who need to be added to Portico groups. This is typically all of the office workers. You'll need their specific office.
     - Each user should get _one and only one_ `PORTICO_XXX` group that indicates their Portico privilege level
     - Each office user should also get one _or more_ office groups, which are used for file-sharing. For example, a Main Office Manager might be in the `PORTICO_Admissions` group, and the `Main Office` group.
 - Implement this user list in the Open Directory using Workgroup Manager to add users to groups.
-    - You'll need usernames and passwords. If you used `odt_create_users` you'll have a list of those already.
+    - You'll need usernames and passwords. If you used `od_create_users` you'll have a list of those already.
     - People can have multiple usernames. So "Donald Merand" might have the usernames `donald`, `dmerand`, `donaldmerand`, and `Donald Merand`.
     - If you're doing passwords by hand, you can either generate passwords for people and give them out, or have people give you passwords. Either is fine. **JUST DON'T KEEP THE PASSWORDS IN PLAIN-TEXT ANYWHERE**.
-- Once your Open Directory looks good, it's time to run the `odt_get_users.sh` utility. This will give you a file called `final_list.tab`.
+- Once your Open Directory looks good, it's time to run the `od_get_users.sh` utility. This will give you a file called `final_list.tab`.
 - Open the `Message Board Sync` FileMaker database.
 - Clear out any records that there may be in the database (if you didn't put them in yourself, natch)
 - Import from your `final_list.tab` file. The default import order should be fine.
