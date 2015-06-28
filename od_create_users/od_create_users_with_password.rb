@@ -14,7 +14,8 @@
 # GROUPNAME` command-line option. 
 #
 # The program will output a file (`server_user_list.txt` by default) which is a
-# list of all usernames and passwords that have been added to the OD.
+# list of all usernames and passwords that have been added to the OD. This file
+# is handy for the "create user folder" scripts located elsewhere in this repo.
 
 
 

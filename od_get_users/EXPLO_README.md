@@ -1,5 +1,7 @@
 Get Users and Groups
 ====================
+__NOTE__: This procedure is deprecated as of 2015. `message_board` and Portico are synching up directly now.
+
 The purpose of this script is to extract a list of groups and users from the LDAP database on a given OS X server. We use this list to put those users in the `message_board` (MB) database. Since the MB database associates logins with "nicknames", we need a list of every login that a user might use so that no matter which one they use, the database will associate properly. 
 
 We also need the names of the groups that users are in so that we can associate their nickname with the appropriate department in the MB.

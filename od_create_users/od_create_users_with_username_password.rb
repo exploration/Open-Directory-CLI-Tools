@@ -7,14 +7,15 @@
 # users, and optionally assign them to groups, based on a simple export of user
 # names from eg. yer database.
 #
-# It takes a tab-separated file in the form: `FullName TAB Password` and
-# creates an OD user for each row.
+# It takes a tab-separated file in the form: `Username TAB Name TAB Password`
+# and creates an OD user for each row.
 #
 # You can pass an OD group you'd like your users to be in with the `-g
 # GROUPNAME` command-line option. 
 #
 # The program will output a file (`server_user_list.txt` by default) which is a
-# list of all usernames and passwords that have been added to the OD.
+# list of all usernames and passwords that have been added to the OD. This file
+# is handy for the "create user folder" scripts located elsewhere in this repo.
 
 
 
