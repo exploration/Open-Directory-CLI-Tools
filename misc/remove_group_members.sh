@@ -5,11 +5,16 @@
 # a certain OD group. At Explo, we use this to remove all summer-only logins
 # after the summer is over.
 
-HOST=127.0.0.1
-GROUP=od_group_name
-USERNAME=diradmin
-PASSWORD=notgonnatell
+# TODO: update with better visual feedback 
 
-dscl -u "${USERNAME}" -P "${PASSWORD}" "/LDAPv3/${HOST}" read "Groups/${GROUP}" GroupMembership | 
-awk '{gsub(/ /, "\n", $0);print $0;}' | 
+HOST=127.0.0.1
+GROUP=$1
+if [ -z $GROUP ]; then
+  GROUP=invalid
+fi
+USERNAME=diradmin
+PASSWORD=yerpassword
+
+dscl -u "${USERNAME}" -P "${PASSWORD}" "/LDAPv3/${HOST}" read "Groups/${GROUP}" GroupMembership |
+awk '{gsub(/ /, "\n", $0);print $0;}' |
 xargs -I xXx dscl -u "${USERNAME}" -P "${PASSWORD}" "/LDAPv3/${HOST}" delete /Users/xXx
